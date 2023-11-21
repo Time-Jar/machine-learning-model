@@ -3,7 +3,7 @@
 Requirements:
 
 ```sh
-pip install supabase pandas tensorflow scikit-learn
+pip install supabase pandas tensorflow scikit-learn matplotlib
 ```
 
 Export env from `server`:
