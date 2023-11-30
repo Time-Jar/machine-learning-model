@@ -1,6 +1,5 @@
-running
-driving
 sitting/standing/laying
-cycling
 walking
-flying
+running
+cycling
+driving
