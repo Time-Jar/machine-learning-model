@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  model-api:
+    image: tensorflow-model:latest
+    networks:
+      - supabase-internal
+    ports:
+      - "27453:5000"
+    environment:
+      MODEL_PATH: ""
+
+      NVIDIA_VISIBLE_DEVICES: all
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: [gpu]
+
+networks:
+  supabase-internal:
+    external: true

@@ -4,6 +4,8 @@ Requirements:
 
 ```sh
 pip install supabase pandas tensorflow scikit-learn matplotlib tensorflow-addons
+
+pip install flask
 ```
 
 Export env from `server`:
