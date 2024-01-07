@@ -1,8 +1,8 @@
 version: "3"
 
 services:
-  model-api:
-    image: tensorflow-model:latest
+  server-tensorflow-api:
+    image: server-tensorflow-api:latest
     networks:
       - supabase-internal
     ports:

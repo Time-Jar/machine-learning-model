@@ -1,8 +1,9 @@
 
+training-deps:
+	pip install -r training/requirements.txt
 
+server-build:
+	sudo docker build -t server-tensorflow-api:latest .
 
-build:
-	sudo docker build -t tensorflow-model:latest .
-
-deploy:
+server-deploy:
 	sudo docker-compose up
