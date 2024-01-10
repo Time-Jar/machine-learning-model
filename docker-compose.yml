@@ -1,14 +1,16 @@
 version: "3"
 
 services:
-  server-tensorflow-api:
-    image: server-tensorflow-api:latest
+  supabase-tensorflow-api:
+    image: supabase-tensorflow-api:latest
     networks:
       - supabase-internal
     ports:
-      - "27453:5000"
+      - "localhost:5000:5000"
     environment:
       MODEL_PATH: ""
+      SUPABASE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
 
       NVIDIA_VISIBLE_DEVICES: all
     deploy:

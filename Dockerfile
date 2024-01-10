@@ -1,5 +1,5 @@
 # Use an official NVIDIA runtime as a parent image
-FROM 12.3.1-base-ubuntu22.04
+FROM nvidia/cuda:12.3.1-base-ubuntu22.04
 
 # Install basics
 RUN apt-get update && apt-get install -y python3-pip
