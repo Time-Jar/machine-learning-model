@@ -1,7 +1,13 @@
+from telnetlib import BINARY
 from tensorflow.keras.layers import Input, Dense, Embedding, Flatten, Concatenate
 from tensorflow.keras.models import Model
+from enum import Enum
 
-def build_and_compile_model(num_buckets, embedding_dim, feature_columns):
+class SupervisedMLA(Enum):
+    REGRESSION = 1
+    BINARY_CLASSIFICATION = 2
+
+def build_and_compile_model(num_buckets, embedding_dim, feature_columns, supervisedMLA: SupervisedMLA): # supervised ML algorithm
     """
     Builds and compiles a TensorFlow model for the given feature columns.
     """
@@ -24,12 +30,19 @@ def build_and_compile_model(num_buckets, embedding_dim, feature_columns):
     x = Dense(64, activation='relu')(x)
 
     # Output Layer for Percentage (regression)
-    output = Dense(1, activation='linear')(x)  # 'linear' can be omitted as it is the default
-
+    output = None
+    if (supervisedMLA == SupervisedMLA.REGRESSION):
+        output = Dense(1, activation='linear')(x)  # Regression
+    if (supervisedMLA == SupervisedMLA.BINARY_CLASSIFICATION):
+        output = Dense(1, activation='sigmoid')(x) # Binary classification
+        
     # Model
     model: Model = Model(inputs=list(inputs.values()), outputs=output)
 
-    # Compile the model for regression
-    model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])  # mae is mean absolute error
-
+    # Compile the model (the loss function)
+    if (supervisedMLA == SupervisedMLA.REGRESSION):
+        model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae']) # Regression, mae is mean absolute error
+    if (supervisedMLA == SupervisedMLA.BINARY_CLASSIFICATION):
+       model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']) # Binary classification
+    
     return model
