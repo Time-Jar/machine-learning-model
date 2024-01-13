@@ -9,10 +9,10 @@ RUN pip3 install --upgrade pip
 WORKDIR /usr/src/app
 
 # Copy the current directory contents into the container at /usr/src/app
-COPY server/* .
+COPY ./server server
 
 # Install any needed packages specified in requirements.txt
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r server/requirements.txt
 
 # Run app.py when the container launches
-CMD "python3 -m server.app"
+CMD ["python3", "-m", "server.app"]

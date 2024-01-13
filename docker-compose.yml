@@ -3,11 +3,12 @@ version: "3"
 services:
   supabase-tensorflow-api:
     image: supabase-tensorflow-api:latest
+    container_name: supabase-tensorflow-api
     restart: always
     networks:
       - supabase-internal
     ports:
-      - "127.0.0.1:5000:5000"
+      - "127.0.0.1:5001:5000"
     environment:
       MODEL_PATH: "/model/model.keras"
       SUPABASE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL}
