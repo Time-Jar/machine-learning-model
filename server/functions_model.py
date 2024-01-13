@@ -1,13 +1,9 @@
-from tensorflow.keras.layers import Input, Dense, Embedding, Flatten, Concatenate
+from tensorflow.keras.layers import Input, Dense, Embedding, Flatten, Concatenate, BatchNormalization
 from tensorflow.keras.models import Model
 import tensorflow as tf
-from enum import Enum
 
-class SupervisedMLA(Enum):
-    REGRESSION = 1
-    BINARY_CLASSIFICATION = 2
-
-def build_and_compile_model(num_buckets, embedding_dim, feature_columns, supervisedMLA: SupervisedMLA): # supervised ML algorithm
+# supervised ML algorithm
+def build_and_compile_model(num_buckets, embedding_dim, feature_columns):
     """
     Builds and compiles a TensorFlow model for the given feature columns.
     """
@@ -30,20 +26,13 @@ def build_and_compile_model(num_buckets, embedding_dim, feature_columns, supervi
     x = Dense(64, activation='relu')(x)
 
     # Output Layer for Percentage (regression)
-    output = None
-    if (supervisedMLA == SupervisedMLA.REGRESSION):
-        output = Dense(1, activation='linear')(x)  # Regression
-    if (supervisedMLA == SupervisedMLA.BINARY_CLASSIFICATION):
-        output = Dense(1, activation='sigmoid')(x) # Binary classification
+    output = Dense(1, activation='sigmoid')(x) # Binary classification
         
     # Model
     model: Model = Model(inputs=list(inputs.values()), outputs=output)
 
     # Compile the model (the loss function)
-    if (supervisedMLA == SupervisedMLA.REGRESSION):
-        model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae']) # Regression, mae is mean absolute error
-    if (supervisedMLA == SupervisedMLA.BINARY_CLASSIFICATION):
-       model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']) # Binary classification
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']) # Binary classification
     
     return model
 
@@ -91,7 +80,9 @@ def build_and_compile_model_with_attention_machanism(num_buckets, embedding_dim,
 
     # Dense Layers
     x = Dense(128, activation='relu')(concatenated_features)
+    x = BatchNormalization()(x)
     x = Dense(64, activation='relu')(x)
+    x = BatchNormalization()(x)
 
     # Output Layer for Binary Classification
     output = Dense(1, activation='sigmoid')(x)

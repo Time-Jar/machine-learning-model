@@ -25,6 +25,6 @@ def mergeUsersAndAppUsage(df_user_app_usage_normalized, df_users_normalized):
     merged_df = functions_basic.hash_encode(merged_df, 'user_id', 1000) # hash-encoding upto 1000 users
 
     merged_df = merged_df.drop(columns=['id'])
-    merged_df = functions_basic.reduce_dataframe_types(merged_df)
+    merged_df = functions_basic.set_column_data_types(merged_df)
     
     return merged_df

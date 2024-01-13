@@ -3,16 +3,19 @@ version: "3"
 services:
   supabase-tensorflow-api:
     image: supabase-tensorflow-api:latest
+    restart: always
     networks:
       - supabase-internal
     ports:
-      - "localhost:5000:5000"
+      - "127.0.0.1:5000:5000"
     environment:
-      MODEL_PATH: ""
+      MODEL_PATH: "/model/model.keras"
       SUPABASE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL}
       SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
-
+      # Cuda
       NVIDIA_VISIBLE_DEVICES: all
+    volumes:
+      - ./model/model.keras:/model/model.keras:r
     deploy:
       resources:
         reservations:

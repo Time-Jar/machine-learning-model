@@ -108,18 +108,27 @@ def hash_encode(df_original: pd.DataFrame, column: str, num_buckets: int):
 
 # Merging data
 
-def reduce_dataframe_types(df_original):
+import re
+
+# Remember, this is the final processed data already
+def set_column_data_types(df_original):
     """
-    Reduces dataframe types.
+    Set data types for specific columns of a pandas DataFrame based on predefined rules.
     """
-    df = df_original.copy()
     
-    for col in df.columns:
-        if df[col].dtype == 'float64':
-            df[col] = df[col].astype('float32')
-        elif df[col].dtype == 'int64':
-            if col in ["app_name", "user_id"]:
-                df[col] = df[col].astype('uint16') # increase this if hash-encoding with larger bucket sizes
-            else:
-                df[col] = df[col].astype('bool') # all one-hot encoded things
+    df = df_original.copy()
+
+    # Combined column patterns and their corresponding data types
+    column_type_patterns = {
+        'float32': ['age', 'time_of_day', 'app_usage_time'],
+        'bool': ['sex_', 'should_be_blocked', 'weekday_', 'acceptance_', 'action_', 'location_'],
+        'uint16': ['app_name', 'user_id']
+    }
+
+    for dtype, patterns in column_type_patterns.items():
+        for pattern in patterns:
+            matching_columns = [col for col in df.columns if re.match(pattern, col) or col == pattern]
+            for col in matching_columns:
+                df[col] = df[col].astype(dtype)
+
     return df

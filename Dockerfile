@@ -15,4 +15,4 @@ COPY server/* .
 RUN pip3 install -r requirements.txt
 
 # Run app.py when the container launches
-CMD ["python3", "app.py"]
+CMD "python3 -m server.app"
