@@ -21,7 +21,7 @@ def auth():
     return supabase
 
 # Fetch data from each table
-def fetchTables(supabase: Client, userId: str = ""):
+def fetchTables(supabase: Client, getAppUsageData: bool = True):
     _acceptance_data = supabase.table("_acceptance").select("*").execute().data
     _actions_data = supabase.table("_actions").select("*").execute().data
     _app_names_data = supabase.table("_app_names").select("*").execute().data
@@ -30,14 +30,11 @@ def fetchTables(supabase: Client, userId: str = ""):
     _weekdays = supabase.table("_weekdays").select("*").execute().data
 
     user_app_usage_data: List[Any] = []
-    users_data: List[Any] = []
-
-    if (len(userId) == 0):
+    
+    if (getAppUsageData):
         user_app_usage_data = supabase.table("user_app_usage").select("*").execute().data
-        users_data = supabase.table("users").select("*").execute().data
-    else:
-        user_app_usage_data = supabase.table("user_app_usage").select("*").order('id', True).eq("user_id", userId).limit(1).execute().data # type: ignore
-        users_data = supabase.table("users").select("*").execute().data
+    
+    users_data = supabase.table("users").select("*").execute().data
         
     return _acceptance_data, _actions_data, _app_names_data, _location_data, _sex, _weekdays, user_app_usage_data, users_data
 

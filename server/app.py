@@ -18,10 +18,30 @@ def predict():
             raise ValueError("request json not present")
         
         userId = data['userId']
+        appNameId = data['appNameId']
+        weekday = data['weekday']
+        timeOfDay = data['timeOfDay']
+        locationId = data['locationId']
         
         supabase = functions_supabase.auth()
 
-        _acceptance_data, _actions_data, _app_names_data, _location_data, _sex, _weekdays, user_app_usage_data, users_data = functions_supabase.fetchTables(supabase, userId)
+        _acceptance_data, _actions_data, _app_names_data, _location_data, _sex, _weekdays, user_app_usage_data, users_data = functions_supabase.fetchTables(supabase, False)
+        user_app_usage_data = [
+            {
+                # 'id': 0,
+                # 'created_at': '',
+                'app_name': appNameId,
+                'user_id': userId,
+                # 'acceptance': -1,
+                # 'should_be_blocked': False,
+                # 'action': -1,
+                'location': locationId,
+                'weekday': weekday,
+                'time_of_day': timeOfDay,
+                # 'app_usage_time': -1
+            },
+        ]
+        
         df__acceptance, df__actions, df__app_names, df__location, df__sex, df__weekdays, df_user_app_usage, df_users = functions_basic.toPandasDataframes(_acceptance_data, _actions_data, _app_names_data, _location_data, _sex, _weekdays, user_app_usage_data, users_data)
         df_user_app_usage_normalized, df_users_normalized = functions_aggregated.normalizeAndNumericalize(df__acceptance, df__actions, df__app_names, df__location, df__sex, df__weekdays, df_user_app_usage, df_users)
         merged_df = functions_aggregated.mergeUsersAndAppUsage(df_user_app_usage_normalized, df_users_normalized)
