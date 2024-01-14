@@ -56,7 +56,7 @@ def clearAndResetMissingColumnsInTraining(data_dict):
     for key in data_dict.keys():
         if any(re.match(pattern, key) for pattern in patterns_to_clear):
             # Set all values in matching columns to False
-            data_dict[key] = np.array([False] * len(data_dict[key]))
+            data_dict[key] = np.array([False] * len(data_dict[key]), dtype='bool')
         elif key == 'app_usage_time':
             # Set all values in 'app_usage_time' to 0
             data_dict[key] = np.array([0.0] * len(data_dict[key]), dtype='float32')
