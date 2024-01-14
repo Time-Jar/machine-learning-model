@@ -8,7 +8,6 @@ app = Flask(__name__)
 
 # Load the pre-trained model
 model = tf.keras.models.load_model(os.environ.get("MODEL_PATH") or "./model/model.keras") # type: ignore
-import re
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -48,22 +47,7 @@ def predict():
         df_user_app_usage_normalized, df_users_normalized = functions_aggregated.normalizeAndNumericalize(df__acceptance, df__actions, df__app_names, df__location, df__sex, df__weekdays, df_user_app_usage, df_users)
         merged_df = functions_aggregated.mergeUsersAndAppUsage(df_user_app_usage_normalized, df_users_normalized)
 
-        # To clear
-        patterns_to_clear = ['acceptance_.*', 'action_.*'] # Patterns for columns to be dropped
-        columns_matching_patterns = [col for col in merged_df.columns if any(re.match(pattern, col) for pattern in patterns_to_clear)] # Find columns that match the patterns
-
-        # Drop and clear the columns
-        merged_df = merged_df.drop(columns=['should_be_blocked'])
-        merged_df[columns_matching_patterns] = False
-        merged_df['app_usage_time'] = -1
-        
-        merged_df['app_usage_time'] = merged_df['app_usage_time'].astype('float32')
-
-        # Loop through each column and check its data type
-        #for column in merged_df.columns:
-        #    if merged_df[column].dtype == 'bool' or column in all_columns_to_clear:
-        #        # Convert boolean columns to uint8 type
-        #        merged_df[column] = merged_df[column].astype('bool')
+        merged_df = functions_aggregated.clearAndResetMissingColumnsInApp(merged_df)
 
         print(merged_df)
         print(merged_df.dtypes)

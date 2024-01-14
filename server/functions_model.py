@@ -23,8 +23,10 @@ def build_and_compile_model(num_buckets, embedding_dim, feature_columns):
 
     # For simplicity, using Dense layers instead of Transformer
     x = Dense(128, activation='relu')(concatenated_features)
+    x = BatchNormalization()(x)
     x = Dense(64, activation='relu')(x)
-
+    x = BatchNormalization()(x)
+    
     # Output Layer for Percentage (regression)
     output = Dense(1, activation='sigmoid')(x) # Binary classification
         
@@ -36,7 +38,11 @@ def build_and_compile_model(num_buckets, embedding_dim, feature_columns):
     
     return model
 
-from tensorflow.keras.layers import Input, Dense, Embedding, Flatten, Concatenate, Multiply, Add
+from tensorflow.keras.layers import Input, Dense, Embedding, Flatten, Concatenate, Multiply
+from tensorflow.keras.optimizers.schedules import ExponentialDecay
+from tensorflow.keras.metrics import Precision, Recall
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.optimizers import Adam
 
 def attention_mechanism(embeddings):
     # Concatenate embeddings
@@ -78,10 +84,10 @@ def build_and_compile_model_with_attention_machanism(num_buckets, embedding_dim,
     # Concatenated features
     concatenated_features = Concatenate(axis=-1)([attention_output_2d] + reshaped_other_cols)
 
-    # Dense Layers
-    x = Dense(128, activation='relu')(concatenated_features)
+    # Dense Layers (kernel_regularizer to prevent overfitting)
+    x = Dense(128, activation='relu', kernel_regularizer=l2(0.001))(concatenated_features)
     x = BatchNormalization()(x)
-    x = Dense(64, activation='relu')(x)
+    x = Dense(64, activation='relu', kernel_regularizer=l2(0.001))(x)
     x = BatchNormalization()(x)
 
     # Output Layer for Binary Classification
@@ -89,8 +95,30 @@ def build_and_compile_model_with_attention_machanism(num_buckets, embedding_dim,
 
     # Model
     model = Model(inputs=list(inputs.values()), outputs=output)
+    
+    # Learning rate
+    initial_learning_rate = 0.001
+    lr_schedule = ExponentialDecay(
+        initial_learning_rate,
+        decay_steps=1000000,
+        decay_rate=0.90,
+        staircase=True
+    )
 
     # Compile the model for Binary Classification
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=Adam(learning_rate=lr_schedule), loss='binary_crossentropy', metrics=['accuracy', Precision(), Recall()])
 
     return model
+
+## Other
+
+import os
+
+def get_file_size_in_mb(file_path):
+    # Get file size in bytes
+    file_size_bytes = os.path.getsize(file_path)
+
+    # Convert bytes to megabytes
+    file_size_mb = file_size_bytes / (1024 * 1024)
+
+    return file_size_mb
