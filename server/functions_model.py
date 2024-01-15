@@ -2,6 +2,9 @@ from tensorflow.keras.layers import Input, Dense, Embedding, Flatten, Concatenat
 from tensorflow.keras.models import Model
 import tensorflow as tf
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable TensorFlow warnings
+
 # supervised ML algorithm
 def build_and_compile_model(num_buckets, embedding_dim, feature_columns):
     """

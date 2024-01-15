@@ -3,6 +3,9 @@ from typing import Any, Optional
 import os
 from typing import List
 
+import logging
+logging.getLogger("httpx").setLevel(logging.WARNING) # Disable Supabase info logs
+
 # Auth
 
 def auth():

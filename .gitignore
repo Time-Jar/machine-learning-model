@@ -3,3 +3,5 @@
 server/__pycache__
 
 model/*
+
+saved/*
