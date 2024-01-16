@@ -1,5 +1,0 @@
-sitting/standing/laying
-walking
-running
-cycling
-driving
