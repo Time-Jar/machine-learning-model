@@ -6,3 +6,5 @@ Export env from `server`:
 # eval $(sops -d ./../supabase/.env | grep -v '^#' | sed 's/^/export /')
 sops -d ./../supabase/.env > .env
 ```
+
+Build container using `docker build`.
